@@ -8,15 +8,15 @@
 
 ### library list
 
-- Adafruit_GFX
+- [Adafruit_GFX](https://github.com/adafruit/Adafruit-GFX-Library)
 
-- Adafruit_SSD1306
+- [Adafruit_SSD1306](https://github.com/adafruit/Adafruit_SSD1306)
 
-- ESP8266WiFi
+- [ESP8266WiFi](https://github.com/esp8266/Arduino)
 
-- ESP8266HTTPClient
+- [ESP8266HTTPClient](https://github.com/esp8266/Arduino)
 
-- ArduinoJson
+- [ArduinoJson](https://github.com/bblanchon/ArduinoJson)
 
 #### changed i2c pins
 

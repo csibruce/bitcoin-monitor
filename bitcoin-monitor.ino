@@ -23,7 +23,7 @@ boolean titleFlag = true;
 
 HTTPClient http;
 
-#define OLED_RESET LED_BUILTIN  //4
+#define OLED_RESET LED_BUILTIN
 Adafruit_SSD1306 display(OLED_RESET);
 
 #if (SSD1306_LCDHEIGHT != 64)
