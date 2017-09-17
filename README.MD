@@ -1,4 +1,4 @@
-## Bitcoin-monigor ESP8266 ARDUINO
+## Bitcoin-monitor ESP8266 ARDUINO
 
 ![alt text](screenshot/bitcoin-monitor.gif "Bitcoin-monitor")
 
