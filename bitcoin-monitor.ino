@@ -1,20 +1,17 @@
-
 #include <SPI.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
-#include <ESP8266WiFi.h>
+#include <ESP8266WiFi.h>          //https://github.com/esp8266/Arduino
 #include <ESP8266HTTPClient.h>
-
-#include <DNSServer.h>            //Local DNS Server used for redirecting all requests to the configuration portal
-#include <ESP8266WebServer.h>     //Local WebServer used to serve the configuration portal
+#include <ESP8266WebServer.h>
+#include <DNSServer.h>
 #include <WiFiManager.h>
-
 #include <ArduinoJson.h>
-#include "credentials.h"
 
 String status = "connecting";
 const char* api_url[] = {"http://csibruce.iptime.org/get-price", ""};
+
 
 int FIRST_LINE = 5;
 int SECOND_LINE = 13;
@@ -27,6 +24,7 @@ int SEVENTH_LINE = 53;
 boolean titleFlag = true;
 
 HTTPClient http;
+boolean needConfigure = true;
 
 #define OLED_RESET LED_BUILTIN
 Adafruit_SSD1306 display(OLED_RESET);
@@ -35,7 +33,9 @@ Adafruit_SSD1306 display(OLED_RESET);
 #error("Height incorrect, please fix Adafruit_SSD1306.h!");
 #endif
 
+
 void setup() {
+  // put your setup code here, to run once:
   Serial.begin(115200);
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
   display.clearDisplay();
@@ -52,25 +52,38 @@ void setup() {
   display.setTextSize(1);
   display.setTextColor(WHITE);
   display.setCursor(4,FIRST_LINE);
-  display.println(ssid);
+  display.println(WiFi.SSID());
   display.display();
+  //  WiFi.disconnect(true);  // 무조건 처음부터 설정가능하게..
+  Serial.println("Starting");
+  Serial.println("Checking saved ssid/password");
+  if(WiFi.SSID() != "") {
+    int trycount = 0;
+    while(trycount == 10) {
+      Serial.println("Connecting...");
+      if ((trycount%4) == 0) status = "connecting";
+      setState(FIRST_LINE, status+=".", false);
+      WiFi.begin();
+      delay(500);
+    }
 
-  WiFi.begin(ssid, password);
+    if (trycount < 10) {
+      Serial.println("connected!!!!!");
+      needConfigure = false;
 
-  int conectCount = 0;
-  while (WiFi.status() != WL_CONNECTED) {
-    if ((conectCount%4) == 0) status = "connecting";
-    setState(FIRST_LINE, status+=".", false);
-    delay(500);
-    conectCount++;
+      status = "SSID: ";
+      status+=WiFi.SSID();
+      displayTitle();
+      displayKeys();
+    }
   }
-  status = "SSID: ";
-  status+=ssid;
-  displayTitle();
+
+}
+
+void displayKeys() {
   setState(FOURTH_LINE, "bithumb: ", false);
   setState(FIFTH_LINE, "coinone: ", false);
   setState(SIXTH_LINE, "korbit : ", false);
-
 }
 
 void displayTitle() {
@@ -122,7 +135,31 @@ void getPrices() {
   http.end();
 }
 
+
+void startConfigPortal() {
+    status = "SET SSID/PW";
+    setState(FIRST_LINE, status, false);
+    setState(FOURTH_LINE, "Find", false);
+    setState(FIFTH_LINE, "AwesomeBruce", false);
+    setState(SIXTH_LINE, "192.168.4.1", false);
+    WiFiManager wifiManager;
+    wifiManager.startConfigPortal("AwesomeBruce");
+    wifiManager.setTimeout(120);
+    WiFi.mode(WIFI_STA);
+
+    //if you get here you have connected to the WiFi
+    Serial.println("connected...yeey :)");
+    needConfigure = false;
+    status = "SSID: ";
+    status+=WiFi.SSID();
+    displayTitle();
+    displayKeys();
+}
+
+
 void loop() {
+  if (needConfigure) startConfigPortal();
+  Serial.println(WL_CONNECTED);
   displayTitle();
   if (WiFi.status() == WL_CONNECTED) {
     getPrices();
