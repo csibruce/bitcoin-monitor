@@ -2,7 +2,19 @@
 
 ![alt text](screenshot/bitcoin-monitor.gif "Bitcoin-monitor")
 
-changed i2c pins
+### library list
+
+- Adafruit_GFX
+
+- Adafruit_SSD1306
+
+- ESP8266WiFi
+
+- ESP8266HTTPClient
+
+- ArduinoJson
+
+#### changed i2c pins
 
 ```arduino
 // I2C Init
