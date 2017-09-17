@@ -1,4 +1,6 @@
-readme
+## Bitcoin-monigor ESP8266 ARDUINO
+
+![alt text](screenshot/bitcoin-monitor.gif "Bitcoin-monitor")
 
 changed i2c pins
 
