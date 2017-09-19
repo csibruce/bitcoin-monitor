@@ -54,20 +54,21 @@ void setup() {
   display.setCursor(4,FIRST_LINE);
   display.println(WiFi.SSID());
   display.display();
-  //  WiFi.disconnect(true);  // 무조건 처음부터 설정가능하게..
+  // WiFi.disconnect(true);  // 무조건 처음부터 설정가능하게..
   Serial.println("Starting");
   Serial.println("Checking saved ssid/password");
   if(WiFi.SSID() != "") {
+    WiFi.begin();
     int trycount = 0;
-    while(trycount == 10) {
+    while(trycount < 11) {
       Serial.println("Connecting...");
       if ((trycount%4) == 0) status = "connecting";
       setState(FIRST_LINE, status+=".", false);
-      WiFi.begin();
+      trycount++;
       delay(500);
     }
 
-    if (trycount < 10) {
+    if (trycount < 10 || (WiFi.status() == WL_CONNECTED)) {
       Serial.println("connected!!!!!");
       needConfigure = false;
 
@@ -75,6 +76,14 @@ void setup() {
       status+=WiFi.SSID();
       displayTitle();
       displayKeys();
+    }
+
+    if ((trycount >= 10) || (WiFi.status() != WL_CONNECTED)) {
+      status = "CONNECTION FAIL";
+      WiFi.disconnect(true);
+      needConfigure = true;
+      displayTitle();
+      delay(1000);
     }
   }
 
